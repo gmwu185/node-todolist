@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "86301d31-d415-4866-8de4-b099a9d1bc6d",
+		"name": "todoList - Heroku",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "取得所有待辦事項",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://fathomless-mesa-31234.herokuapp.com/todos",
+					"protocol": "https",
+					"host": [
+						"fathomless-mesa-31234",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "新增單筆待辦事項",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"今天要刷牙\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://fathomless-mesa-31234.herokuapp.com/todos",
+					"protocol": "https",
+					"host": [
+						"fathomless-mesa-31234",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "刪除所有待辦事項",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://fathomless-mesa-31234.herokuapp.com/todos",
+					"protocol": "https",
+					"host": [
+						"fathomless-mesa-31234",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "刪除單筆待辦事項",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://fathomless-mesa-31234.herokuapp.com/todos/85e5bd40-ccff-4f3e-a04c-0e8b8aeaa604",
+					"protocol": "https",
+					"host": [
+						"fathomless-mesa-31234",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"todos",
+						"85e5bd40-ccff-4f3e-a04c-0e8b8aeaa604"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "編輯單筆待辦事項",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"title\": \"編輯新的資料\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://fathomless-mesa-31234.herokuapp.com/todos/207a896d-fa97-45db-a0d1-b737df24f818",
+					"protocol": "https",
+					"host": [
+						"fathomless-mesa-31234",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"todos",
+						"207a896d-fa97-45db-a0d1-b737df24f818"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
