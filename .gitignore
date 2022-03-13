@@ -1,0 +1,9 @@
+# Npm & NodeJS
+node_modules/
+node_modules_*/
+
+# systen
+.DS_Store
+
+# project
+/inbox
