@@ -1,30 +1,17 @@
 const http = require('http');
 const { v4: uuidv4 } = require('uuid');
-const errorHandle = require('./errorHandle');
-const todos = [
-  // { title: '(預設要做的事) 今天要刷牙', id: uuidv4() },
-];
+const headers = require('./Header');
+const { errorHandle, successHandle } = require('./statusHandle');
+const todos = [{ title: '(預設要做的事) 今天要刷牙', id: uuidv4() }];
+
 const requestListener = (req, res) => {
-  const headers = {
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, Content-Length, X-Requested-With',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'PATCH, POST, GET, OPTIONS, DELETE',
-    'Content-Type': 'application/json',
-  };
   let body = '';
-  req.on('data', chunk => body += chunk);
+  req.on('data', (chunk) => (body += chunk));
   switch (true) {
-    case req.url == '/todos' && req.method == 'GET':
-      res.writeHead(200, headers);
-      res.write(
-        JSON.stringify({
-          status: 'success',
-          data: todos,
-        })
-      );
-      res.end();
+    case req.method == 'GET' && req.url == '/todos':
+      successHandle(res, headers, todos);
       break;
-    case req.url == '/todos' && req.method == 'POST':
+    case req.method == 'POST' && req.url == '/todos':
       req.on('end', () => {
         try {
           let title = JSON.parse(body).title;
@@ -34,79 +21,45 @@ const requestListener = (req, res) => {
               id: uuidv4(),
             };
             todos.push(todo);
-            res.writeHead(200, headers);
-            res.write(
-              JSON.stringify({
-                status: 'success',
-                data: todos,
-              })
-            );
-            res.end();
+            successHandle(res, headers, todos);
           } else {
-            errorHandle(res);
+            errorHandle(res, headers);
           }
         } catch (error) {
-          errorHandle(res);
+          errorHandle(res, headers);
         }
       });
       break;
-    case req.url == '/todos' && req.method == 'DELETE':
+    case req.method == 'DELETE' && req.url == '/todos':
       todos.length = 0;
-      res.writeHead(200, headers);
-      res.write(
-        JSON.stringify({
-          status: 'success',
-          data: todos,
-        })
-      );
-      res.end();
+      successHandle(res, headers, todos);
       break;
-    case req.url.startsWith('/todos/') && req.method == 'DELETE':
-      const id = req.url.split('/').pop();
-      const index = todos.findIndex((element) => element.id == id);
-      if (index !== -1) {
-        todos.splice(index, 1);
-        res.writeHead(200, headers);
-        res.write(
-          JSON.stringify({
-            status: 'success',
-            data: todos,
-          })
-        );
-        res.end();
-      } else {
-        errorHandle(res);
-      };
+    case req.method == 'DELETE' && req.url.startsWith('/todos/'):
+      const index = todos.findIndex((element) => element.id == req.url.split('/').pop());
+      index !== -1
+        ? (todos.splice(index, 1), successHandle(res, headers, todos))
+        : errorHandle(res, headers);
       break;
-    case req.url.startsWith('/todos/') && req.method == 'PATCH':
+    case req.method == 'PATCH' && req.url.startsWith('/todos/'):
       req.on('end', () => {
         try {
           const newTitle = JSON.parse(body).title;
-          const id = req.url.split('/').pop();
-          const index = todos.findIndex((element) => element.id == id);
-          if (newTitle !== undefined && index !== -1) {
-            todos[index].title = newTitle;
-            res.writeHead(200, headers);
-            res.write(
-              JSON.stringify({
-                status: 'success',
-                data: todos,
-              })
-            );
-            res.end();
-          } else {
-            errorHandle(res);
+          const index = todos.findIndex((element) => element.id == req.url.split('/').pop());
+          if (newTitle !== undefined) {
+            index !== -1
+              ? ((todos[index].title = newTitle), successHandle(res, headers, todos))
+              : errorHandle(res, headers);
           }
         } catch (err) {
-          errorHandle(res);
+          errorHandle(res, headers);
         }
       });
       break;
     case req.method == 'OPTIONS':
-      res.writeHead(200, headers);
-      res.end();
+      successHandle(res, headers);
       break;
-    default: // 當以上條件都不匹配時
+    default:
+      // 當以上條件都不匹配時
       res.writeHead(404, headers);
       res.write(
         JSON.stringify({
@@ -115,7 +68,10 @@ const requestListener = (req, res) => {
         })
       );
       res.end();
+      break;
   }
 };
 const server = http.createServer(requestListener);
-server.listen(process.env.PORT || 3005);
+
+const PORT = process.env.PORT || 3005;
+server.listen(PORT, () => console.log(`Server is running at port ${PORT}`));
