@@ -1,4 +1,6 @@
-function errorHandle(res, headers) {
+const headers = require('./Header');
+
+function errorHandle(res) {
   res.writeHead(400, headers);
   res.write(
     JSON.stringify({
@@ -7,10 +9,10 @@ function errorHandle(res, headers) {
     })
   );
   res.end();
-};
-let successHandle = (res, headers, data) => {
+}
+let successHandle = (res, data) => {
   res.writeHead(200, headers);
-  if(data !== undefined) {
+  if (data !== undefined) {
     res.write(
       JSON.stringify({
         status: 'success',

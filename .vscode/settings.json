@@ -11,5 +11,6 @@
     "titleBar.activeBackground": "#42b883",
     "titleBar.inactiveBackground": "#42b88399"
   },
-  "peacock.color": "#42b883"
+  "peacock.color": "#42b883",
+  "commentTranslate.multiLineMerge": true
 }

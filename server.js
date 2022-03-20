@@ -1,6 +1,5 @@
 const http = require('http');
 const { v4: uuidv4 } = require('uuid');
-const headers = require('./Header');
 const { errorHandle, successHandle } = require('./statusHandle');
 const todos = [{ title: '(預設要做的事) 今天要刷牙', id: uuidv4() }];
 
@@ -9,7 +8,7 @@ const requestListener = (req, res) => {
   req.on('data', (chunk) => (body += chunk));
   switch (true) {
     case req.method == 'GET' && req.url == '/todos':
-      successHandle(res, headers, todos);
+      successHandle(res, todos);
       break;
     case req.method == 'POST' && req.url == '/todos':
       req.on('end', () => {
@@ -21,24 +20,24 @@ const requestListener = (req, res) => {
               id: uuidv4(),
             };
             todos.push(todo);
-            successHandle(res, headers, todos);
+            successHandle(res, todos);
           } else {
-            errorHandle(res, headers);
+            errorHandle(res);
           }
         } catch (error) {
-          errorHandle(res, headers);
+          errorHandle(res);
         }
       });
       break;
     case req.method == 'DELETE' && req.url == '/todos':
       todos.length = 0;
-      successHandle(res, headers, todos);
+      successHandle(res, todos);
       break;
     case req.method == 'DELETE' && req.url.startsWith('/todos/'):
       const index = todos.findIndex((element) => element.id == req.url.split('/').pop());
       index !== -1
-        ? (todos.splice(index, 1), successHandle(res, headers, todos))
-        : errorHandle(res, headers);
+        ? (todos.splice(index, 1), successHandle(res, todos))
+        : errorHandle(res, );
       break;
     case req.method == 'PATCH' && req.url.startsWith('/todos/'):
       req.on('end', () => {
@@ -47,20 +46,20 @@ const requestListener = (req, res) => {
           const index = todos.findIndex((element) => element.id == req.url.split('/').pop());
           if (newTitle !== undefined) {
             index !== -1
-              ? ((todos[index].title = newTitle), successHandle(res, headers, todos))
-              : errorHandle(res, headers);
+              ? ((todos[index].title = newTitle), successHandle(res, todos))
+              : errorHandle(res);
           }
         } catch (err) {
-          errorHandle(res, headers);
+          errorHandle(res);
         }
       });
       break;
     case req.method == 'OPTIONS':
-      successHandle(res, headers);
+      successHandle(res);
       break;
     default:
       // 當以上條件都不匹配時
-      res.writeHead(404, headers);
+      res.writeHead(404);
       res.write(
         JSON.stringify({
           status: 'false',
