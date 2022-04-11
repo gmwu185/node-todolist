@@ -46,8 +46,10 @@ const requestListener = (req, res) => {
           const index = todos.findIndex((element) => element.id == req.url.split('/').pop());
           if (newTitle !== undefined) {
             index !== -1
-              ? ((todos[index].title = newTitle), successHandle(res, todos))
-              : errorHandle(res);
+            ? ((todos[index].title = newTitle), successHandle(res, todos))
+            : errorHandle(res);
+          } else {
+            errorHandle(res);
           }
         } catch (err) {
           errorHandle(res);
