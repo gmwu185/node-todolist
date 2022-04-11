@@ -1,11 +1,20 @@
 const headers = require('./Header');
 
-function errorHandle(res) {
-  res.writeHead(400, headers);
+const errorMessage = {
+  400: '格式錯誤',
+  4001: '無此 ID',
+  4002: 'body 解析錯誤',
+  404: '無此網站路由',
+};
+
+function errorHandle(res, errorNum) {
+  let HeadNum = null;
+  errorNum == 404 ? (HeadNum = 404) : (HeadNum = 400);
+  res.writeHead(HeadNum, headers);
   res.write(
     JSON.stringify({
       status: 'false',
-      message: 'module.exports -> 欄位未填寫正確或無此 todo id',
+      message: errorMessage[errorNum],
     })
   );
   res.end();

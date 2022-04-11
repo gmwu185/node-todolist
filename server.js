@@ -1,6 +1,7 @@
 const http = require('http');
 const { v4: uuidv4 } = require('uuid');
 const { errorHandle, successHandle } = require('./statusHandle');
+const headers = require('./Header');
 const todos = [{ title: '(預設要做的事) 今天要刷牙', id: uuidv4() }];
 
 const requestListener = (req, res) => {
@@ -22,10 +23,10 @@ const requestListener = (req, res) => {
             todos.push(todo);
             successHandle(res, todos);
           } else {
-            errorHandle(res);
+            errorHandle(res, 400);
           }
         } catch (error) {
-          errorHandle(res);
+          errorHandle(res, 4002);
         }
       });
       break;
@@ -34,25 +35,29 @@ const requestListener = (req, res) => {
       successHandle(res, todos);
       break;
     case req.method == 'DELETE' && req.url.startsWith('/todos/'):
-      const index = todos.findIndex((element) => element.id == req.url.split('/').pop());
+      const index = todos.findIndex(
+        (element) => element.id == req.url.split('/').pop()
+      );
       index !== -1
         ? (todos.splice(index, 1), successHandle(res, todos))
-        : errorHandle(res, );
+        : errorHandle(res, 4001);
       break;
     case req.method == 'PATCH' && req.url.startsWith('/todos/'):
       req.on('end', () => {
         try {
           const newTitle = JSON.parse(body).title;
-          const index = todos.findIndex((element) => element.id == req.url.split('/').pop());
+          const index = todos.findIndex(
+            (element) => element.id == req.url.split('/').pop()
+          );
           if (newTitle !== undefined) {
             index !== -1
-            ? ((todos[index].title = newTitle), successHandle(res, todos))
-            : errorHandle(res);
+              ? ((todos[index].title = newTitle), successHandle(res, todos))
+              : errorHandle(res, 4001);
           } else {
-            errorHandle(res);
+            errorHandle(res, 400);
           }
         } catch (err) {
-          errorHandle(res);
+          errorHandle(res, 4002);
         }
       });
       break;
@@ -61,14 +66,7 @@ const requestListener = (req, res) => {
       break;
     default:
       // 當以上條件都不匹配時
-      res.writeHead(404);
-      res.write(
-        JSON.stringify({
-          status: 'false',
-          message: '無此網站路由',
-        })
-      );
-      res.end();
+      errorHandle(res, 404);
       break;
   }
 };
